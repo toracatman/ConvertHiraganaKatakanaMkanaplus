@@ -9,7 +9,7 @@
 			src: url("mkanaplus-subset.woff")  format('woff');
 		}
 		#textarea1 {
-			font-size: 24pt;
+			font-size: 20pt;
 			font-family: "myFont";
 		}
 	</style>
@@ -17,6 +17,7 @@
 		function ToKatakanaCode(c) {
 			//平仮名
 			if (c >= 0x3041 && c <= 0x3096) return c + 0x60;	//ぁ～ゖ
+			if (c >= 0x309D && c <= 0x309E) return c + 0x60;	//ゝ～ゞ
 			if (c == 0x309F) return 0xF7CB5;					//ゟ
 
 			//仮名付録C
@@ -26,7 +27,6 @@
 			if (c >= 0xED1B && c <= 0xED1C) return c - 0xBC22;	//～
 			if (c >= 0xED22 && c <= 0xED25) return c + 0x758;	//～
 			if (c >= 0xED2A && c <= 0xED2D) return c + 0x74C;	//～
-			if (c >= 0xED00 && c <= 0xED3C) return c + 0x40;	//～
 			if (c == 0xED82) return 0x2A708;					//
 
 			//仮名付録A
@@ -41,6 +41,9 @@
 			if (c == 0xF46A) return 0xED77;						//
 			if (c == 0xF485) return 0xF419;						//
 			if (c >= 0xF486 && c <= 0xF487) return c - 0x6A;	//～
+
+			//仮名付録Cの残り
+			if (c >= 0xED00 && c <= 0xED3C) return c + 0x40;	//～
 
 			//仮名補助
 			if (c == 0x1B001) return 0x1B121;					//𛀁
@@ -77,6 +80,7 @@
 		function ToHiraganaCode(c) {
 			//平仮名
 			if (c >= 0x30A1 && c <= 0x30F6) return c - 0x60;	//ぁ～ゖ
+			if (c >= 0x30FD && c <= 0x30FE) return c - 0x60;	//ゝ～ゞ
 			if (c == 0xF7CB5) return 0x309F;					//ゟ
 
 			//仮名付録C
@@ -86,7 +90,6 @@
 			if (c >= 0x30F9 && c <= 0x30FA) return c + 0xBC22;	//～
 			if (c >= 0xF47A && c <= 0xF47D) return c - 0x758;	//～
 			if (c >= 0xF476 && c <= 0xF479) return c - 0x74C;	//～
-			if (c >= 0xED40 && c <= 0xED7C) return c - 0x40;	//～
 			if (c == 0x2A708) return 0xED82;					//
 
 			//仮名付録A
@@ -101,6 +104,9 @@
 			if (c == 0xED77) return 0xF46A;						//
 			if (c == 0xF419) return 0xF485;						//
 			if (c >= 0xF41C && c <= 0xF41D) return c + 0x6A;	//～
+
+			//仮名付録Cの残り
+			if (c >= 0xED40 && c <= 0xED7C) return c - 0x40;	//～
 
 			//仮名補助
 			if (c == 0x1B121) return 0x1B001;					//𛀁
@@ -146,7 +152,22 @@
 	</script>
 </head>
 <body>
-	<textarea cols="60" rows="15" id="textarea1"></textarea><br>
+	Mkana+で使える，対が存在するひらがな、カタカナを相互変換します。入力内容は外部に送信されません。<br>
+	Webフォントを使っているので，Mkana+のインストールは不要です。<br>
+	<textarea cols="90" rows="15" id="textarea1">あいうえおかがきぎくぐけげこごさざしじすずせぜそぞただちぢつづてでとどなにぬねの
+はばぱひびぴふぶぷへべぺほぼぽまみむめもやゆよらりるれろわゐゑをんゔ
+アイウエオカガキギクグケゲコゴサザシジスズセゼソゾタダチヂツヅテデトドナニヌネノ
+ハバパヒビピフブプヘベペホボポマミムメモヤユヨラリルレロワヰヱヲンヴ
+𛀀𛀁𛀆𛀕𛀙𛂦𛄟𛄠𛄡𛄢
+゠゛゜ゝゞ・ーヽヾ
+
+　
+
+ヷヸヹヺ　
+
+ぁぃぅぇぉゕゖっゃゅ󷰹ょゎ𛅐𛅑𛅒𛅓
+ァィゥェォヵヶッャュ󷰼ョヮ𛅤𛅥𛅦𛅧
+ゟヿ𪜈𬻿𬼀𬼂󷲰󷲲󷲳󷲴󷲵</textarea><br>
 	<input type="button" value="カタカナに変換" onclick="TextareaToKatakana()"><br>
 	<input type="button" value="ひらがなに変換" onclick="TextareaToHiragana()">
 </body>
