@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<title>ひらがなカタカナ変換（Mkana+）</title>
+	<style>
+		@font-face {
+			font-family: "myFont";
+			src: url("mkanaplus-subset.woff")  format('woff');
+		}
+		#textarea1 {
+			font-size: 24pt;
+			font-family: "myFont";
+		}
+	</style>
+	<script>
+		function ToKatakanaCode(c) {
+			//平仮名
+			if (c >= 0x3041 && c <= 0x3096) return c + 0x60;	//ぁ～ゖ
+			if (c == 0x309F) return 0xF7CB5;					//ゟ
+
+			//仮名付録C
+			if (c >= 0xED11 && c <= 0xED12) return c + 0x709;	//～
+			if (c == 0xED1A) return 0xF42F;						//
+			if (c >= 0xED18 && c <= 0xED19) return c - 0xBC21;	//～
+			if (c >= 0xED1B && c <= 0xED1C) return c - 0xBC22;	//～
+			if (c >= 0xED22 && c <= 0xED25) return c + 0x758;	//～
+			if (c >= 0xED2A && c <= 0xED2D) return c + 0x74C;	//～
+			if (c >= 0xED00 && c <= 0xED3C) return c + 0x40;	//～
+			if (c == 0xED82) return 0x2A708;					//
+
+			//仮名付録A
+			if (c >= 0xF400 && c <= 0xF404) return c + 0x5;		//～
+			if (c >= 0xF410 && c <= 0xF412) return c + 0x5;		//～
+			if (c == 0xF413) return 0xF40A;						//
+			if (c == 0xF414) return 0xF418;						//
+			if (c == 0xF450) return 0xF47F;						//
+			if (c == 0xF451) return 0xED4A;						//
+			if (c >= 0xF452 && c <= 0xF453) return c - 0x70A;	//～
+			if (c == 0xF469) return 0xED73;						//
+			if (c == 0xF46A) return 0xED77;						//
+			if (c == 0xF485) return 0xF419;						//
+			if (c >= 0xF486 && c <= 0xF487) return c - 0x6A;	//～
+
+			//仮名補助
+			if (c == 0x1B001) return 0x1B121;					//𛀁
+			if (c == 0x1B006) return 0x1B120;					//𛀆
+
+			//仮名拡張A
+			if (c == 0x1B11F) return 0x1B122;					//𛄟
+
+			//小書き仮名拡張
+			if (c >= 0x1B150 && c <= 0x1B153) return c + 0x14;	//𛅐～𛅓
+
+			//CJK統合漢字拡張F
+			if (c == 0x2CF02) return 0x2CEFF;					//𬼂
+
+			//仮名付録B
+			if (c == 0xF7C39) return 0xF7C3C;					//󷰹
+			if (c == 0xF7CB0) return 0x30FF;					//󷲰
+			return c;
+		}
+
+		function ToKatakana(s) {
+			var r = "";
+			for (var i = 0; i < s.length; i++) {
+				var c = s[i].codePointAt();
+				if (c >= 0xD800 && c <= 0xDBFF) {
+					c = s.substring(i, i + 2).codePointAt();
+					i++;
+				}
+				r += String.fromCodePoint(ToKatakanaCode(c));
+			}
+			return r;
+		}
+
+		function ToHiraganaCode(c) {
+			//平仮名
+			if (c >= 0x30A1 && c <= 0x30F6) return c - 0x60;	//ぁ～ゖ
+			if (c == 0xF7CB5) return 0x309F;					//ゟ
+
+			//仮名付録C
+			if (c >= 0xF41A && c <= 0xF41B) return c - 0x709;	//～
+			if (c == 0xF42F) return 0xED1A;						//
+			if (c >= 0x30F7 && c <= 0x30F8) return c + 0xBC21;	//～
+			if (c >= 0x30F9 && c <= 0x30FA) return c + 0xBC22;	//～
+			if (c >= 0xF47A && c <= 0xF47D) return c - 0x758;	//～
+			if (c >= 0xF476 && c <= 0xF479) return c - 0x74C;	//～
+			if (c >= 0xED40 && c <= 0xED7C) return c - 0x40;	//～
+			if (c == 0x2A708) return 0xED82;					//
+
+			//仮名付録A
+			if (c >= 0xF405 && c <= 0xF409) return c - 0x5;		//～
+			if (c >= 0xF415 && c <= 0xF417) return c - 0x5;		//～
+			if (c == 0xF40A) return 0xF413;						//
+			if (c == 0xF418) return 0xF414;						//
+			if (c == 0xF47F) return 0xF450;						//
+			if (c == 0xED4A) return 0xF451;						//
+			if (c >= 0xED48 && c <= 0xED49) return c + 0x70A;	//～
+			if (c == 0xED73) return 0xF469;						//
+			if (c == 0xED77) return 0xF46A;						//
+			if (c == 0xF419) return 0xF485;						//
+			if (c >= 0xF41C && c <= 0xF41D) return c + 0x6A;	//～
+
+			//仮名補助
+			if (c == 0x1B121) return 0x1B001;					//𛀁
+			if (c == 0x1B120) return 0x1B006;					//𛀆
+
+			//仮名拡張A
+			if (c == 0x1B122) return 0x1B11F;					//𛄟
+
+			//小書き仮名拡張
+			if (c >= 0x1B164 && c <= 0x1B167) return c - 0x14;	//𛅐～𛅓
+
+			//CJK統合漢字拡張F
+			if (c == 0x2CEFF) return 0x2CF02;					//𬼂
+
+			//仮名付録B
+			if (c == 0xF7C3C) return 0xF7C39;					//󷰹
+			if (c == 0x30FF) return 0xF7CB0;					//󷲰
+			return c;
+		}
+
+		function ToHiragana(s) {
+			var r = "";
+			for (var i = 0; i < s.length; i++) {
+				var c = s[i].codePointAt();
+				if (c >= 0xD800 && c <= 0xDBFF) {
+					c = s.substring(i, i + 2).codePointAt();
+					i++;
+				}
+				r += String.fromCodePoint(ToHiraganaCode(c));
+			}
+			return r;
+		}
+
+		function TextareaToKatakana() {
+			var textarea1 = document.getElementById("textarea1");
+			textarea1.value = ToKatakana(textarea1.value);
+		}
+
+		function TextareaToHiragana() {
+			var textarea1 = document.getElementById("textarea1");
+			textarea1.value = ToHiragana(textarea1.value);
+		}
+	</script>
+</head>
+<body>
+	<textarea cols="60" rows="15" id="textarea1"></textarea><br>
+	<input type="button" value="カタカナに変換" onclick="TextareaToKatakana()"><br>
+	<input type="button" value="ひらがなに変換" onclick="TextareaToHiragana()">
+</body>
+</html>
